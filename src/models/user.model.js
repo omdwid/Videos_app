@@ -1,6 +1,6 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import { jwt } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const userSchema = mongoose.Schema(
   {
@@ -31,7 +31,7 @@ const userSchema = mongoose.Schema(
       min: 6,
     },
     coverImage: {
-      tpye: String,
+      type: String,
     },
     avatar: {
       type: String,
@@ -50,11 +50,15 @@ const userSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.pre(async function () {
-  if (this.isModified("password"))
+// mongoDB hook this wil run just before the saving of the data
+userSchema.pre('save', async function(next) {
+  if (this.isModified("password")){
     this.password = await bcrypt.hash(this.password, 10);
+  }
+  next();
 });
 
+// injecting methods to the schema also
 userSchema.methods.isPasswordCorrect = async function (pass) {
   return await bcrypt.compare(pass, this.password);
 };
@@ -78,9 +82,6 @@ userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
-      email: this.email,
-      username: this.username,
-      fullName: this.fullName,
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
