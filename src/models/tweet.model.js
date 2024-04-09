@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 
+
 const tweetSchema = new Schema(
 	{
 		content: {

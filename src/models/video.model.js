@@ -27,21 +27,20 @@ const videoSchema = new mongoose.Schema(
     },
     views: {
       type: Number,
-      default: 0
+      default: 0,
     },
     duration: {
       type: Number,
-      required: true
+      required: true,
     },
     isPublished: {
       type: Boolean,
-      required: true,
-      default: true
+      default: true,
     },
   },
   { timestamps: true }
 );
 
-videoSchema.plugin(mongooseAggregatePaginate)
+videoSchema.plugin(mongooseAggregatePaginate);
 
 export const Video = mongoose.model("Video", videoSchema);
